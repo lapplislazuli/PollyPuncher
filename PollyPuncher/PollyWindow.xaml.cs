@@ -20,26 +20,25 @@ namespace PollyPuncher
     /// </summary>
     public partial class PollyWindow : Window
     {
-        private PollyProperties pollyProps;
-        private AudioDeviceProperties audioProps;
+        public PollyProperties pollyProps { get; set; }
+        public AudioDeviceProperties audioProps  { get; set; }
+
         private PollyCaller pc;
         public PollyWindow()
         {
-
             this.pollyProps = App._pollyProperties;
             this.audioProps = App._audioDeviceProperties;
 
             pc = new PollyCaller(pollyProps, audioProps);
             
-            //pc.Call("Hi");
             InitializeComponent();
-
+            
+            this.DataContext = this;
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            pc.testAmazonKit();
-            //throw new NotImplementedException();
+            pc.Call(pollyProps.textToPlay);
         }
     }
 }

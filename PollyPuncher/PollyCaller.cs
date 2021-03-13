@@ -45,7 +45,70 @@ namespace PollyPuncher
 
         public void Call(String text)
         {
+            // Read the Credentials and store them shortly in an array
+            var path = @"C:\Users\lguts\Code\PollyPuncher\rootkey.csv";
             
+            var credentialFile = new Dictionary<string, string>();
+            foreach (var row in File.ReadAllLines(path))
+                credentialFile.Add(row.Split('=')[0], string.Join("=",row.Split('=').Skip(1).ToArray()));
+            
+            // Create Amazon Credentials
+            var options = new CredentialProfileOptions
+            {
+                AccessKey =  credentialFile["AWSAccessKeyId"],
+                SecretKey =  credentialFile["AWSSecretKey"]
+            };
+            // Make Amazon Credential profile 
+            var profile = new Amazon.Runtime.CredentialManagement.CredentialProfile("polly_profile", options);
+            profile.Region = RegionEndpoint.EUCentral1;
+            // Store the Amazon Profile in the Credentials Engine for later use
+            var netSDKFile = new NetSDKCredentialsFile();
+            netSDKFile.RegisterProfile(profile);
+            
+            // This chain uses the credentials to create a token for usage, 
+            // Later the token is used in the Credentials
+            // The chain stores it into awsCredentials, that is used for the client.
+            var chain = new CredentialProfileStoreChain();
+            AWSCredentials awsCredentials;
+            // use awsCredentials
+            if (chain.TryGetAWSCredentials("polly_profile", out awsCredentials))
+            {
+                using (var client = new AmazonPollyClient(awsCredentials, profile.Region))
+                {
+                    var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
+                    {
+                        OutputFormat = "mp3",
+                        SampleRate = "8000",
+                        Text = text,
+                        TextType = "text",
+                        VoiceId = "Hans" // One of Hans, Jenny , ...
+                    });
+                    response.Wait();
+
+                    var res = response.Result;
+            
+                    var audioStream = res.AudioStream;
+                    string contentType = res.ContentType;
+                    int requestCharacters = res.RequestCharacters;
+                    
+                    
+                    using (FileStream fs = File.Create("tmp.mp3"))
+                    {
+                        audioStream.CopyTo(fs);
+                        fs.Flush();
+                    }
+
+                    var devices = WaveOut.DeviceCount;
+                    var directSoundDeviceInfos =  DirectSoundOut.Devices;
+
+                    PlaySound("tmp.mp3",0);
+                    PlaySound("tmp.mp3", 2);
+                    //PlaySound(audioStream,0);
+                    
+                    // For debugging
+                    int waiter = 1;
+                }
+            }
         }
 
         /*
@@ -125,8 +188,8 @@ namespace PollyPuncher
                     int waiter = 1;
                 }
             }
-
         }
+        
         public void PlaySound(string path, int audioDevice = 0 , Action done = null)
         {
             FileStream ms = File.OpenRead(path);

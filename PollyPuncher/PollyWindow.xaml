@@ -8,6 +8,7 @@
         Title="PollyWindow" Height="450" Width="800">
     <Grid>
         <TextBlock>Hi, I am a nice TextBlock.</TextBlock>
-        <Button Click="ButtonBase_OnClick">Feuer Mich</Button>
+        <TextBox x:Name="TextToSound" HorizontalAlignment="Left" Height= "150" Width = "150" Text="{Binding pollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <Button x:Name="PlayButton" Height= "150" Width = "150" Click="ButtonBase_OnClick">Feuer Mich</Button>
     </Grid>
 </Window>
