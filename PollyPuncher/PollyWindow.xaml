@@ -59,7 +59,7 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0"> Voice </Button>
+                <ComboBox Grid.Row="0" ItemsSource="{Binding Path = pollyProps.Voices}" SelectedValue="{Binding Path = pollyProps.voice}"> </ComboBox>
                 <Button Grid.Row="1"> Help </Button>
                 <!-- TODO: Add in v1.1
                 <Button Grid.Row="2"> Last </Button>
