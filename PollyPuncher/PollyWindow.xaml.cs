@@ -40,7 +40,7 @@ namespace PollyPuncher
 
         private void PlayButton_OnClick(object sender, RoutedEventArgs e)
         {
-            pc.Call(pollyProps.textToPlay);
+            pc.Call();
         }
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
@@ -61,7 +61,7 @@ namespace PollyPuncher
         
         private void BtnKeyFileOpen_Click(object sender, RoutedEventArgs e)
         {
-            var fileDialog = new System.Windows.Forms.OpenFileDialog();
+            var fileDialog = new OpenFileDialog();
             var result = fileDialog.ShowDialog();
             switch (result)
             {

@@ -15,7 +15,14 @@ namespace PollyPuncher
 
         private List<string> _voices = new List<string>()
         {
-            "Jenny",
+            "Nicole", 
+            //"Kevin", 
+            //"Enrique", "Tatyana", "Russell", "Olivia", "Lotte", "Geraint", "Carmen", "Mads", "Penelope", "Mia", "Joanna", "Matthew", "Brian", "Seoyeon", "Ruben", "Ricardo",
+            //"Maxim", "Lea", "Giorgio", "Carla", "Naja", "Maja", "Astrid", "Ivy", "Kimberly", "Chantal", "Amy", "Vicki", "Marlene", "Ewa", "Conchita",
+            //"Camila", "Karl", "Zeina", "Miguel", "Mathieu", "Justin", "Lucia", "Jacek", "Bianca", "Takumi", "Ines", "Gwyneth", 
+            //"Cristiano", "Mizuki", "Celine", "Zhiyu", "Jan", "Liv", "Joey", "Raveena", "Filiz", "Dora", "Salli","Aditi","Vitoria", "Emma", "Lupe","Kendra",
+            "Lea",
+            "Carmen",
             "Hans"
         };
         
