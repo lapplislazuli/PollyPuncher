@@ -16,6 +16,9 @@ namespace PollyPuncher
         public int deviceA { get; set; }
         public int deviceB { get; set; }
         
-        List<DirectSoundDeviceInfo> directSoundDeviceInfos =  DirectSoundOut.Devices.ToList();
+        public double volumeA { get; set; } // Volume how loud in %, 0 is silent and 100 is full volume
+        public double volumeB { get; set; } // Volume how loud in %, 0 is silent and 100 is full volume
+
+        public List<DirectSoundDeviceInfo> directSoundDeviceInfos { get; private set; } = DirectSoundOut.Devices.ToList();
     }
 }

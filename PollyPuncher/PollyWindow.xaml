@@ -7,8 +7,76 @@
         mc:Ignorable="d"
         Title="PollyWindow" Height="450" Width="800">
     <Grid>
-        <TextBlock>Hi, I am a nice TextBlock.</TextBlock>
-        <TextBox x:Name="TextToSound" HorizontalAlignment="Left" Height= "150" Width = "150" Text="{Binding pollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        <Button x:Name="PlayButton" Height= "150" Width = "150" Click="ButtonBase_OnClick">Feuer Mich</Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <!-- Comment  -->
+        <Grid Grid.Row="0" x:Name="VolumeGrid">
+            <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="8*" />
+                </Grid.ColumnDefinitions>
+            <Grid x:Name="KeySelectGrid" Grid.Column="0">
+                <Button> Key </Button>
+            </Grid>
+            <Grid x:Name="AudioPanelGrid" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*" />
+                    <ColumnDefinition Width="4*" />
+                </Grid.ColumnDefinitions>
+                <Slider Grid.Row="0" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <Slider Grid.Row="1" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <Button Grid.Row="0" Grid.Column="1">Device A</Button>
+                <Button Grid.Row="1" Grid.Column="1">Device A</Button>
+            </Grid>
+        </Grid>
+        
+        <Grid x:Name="TextGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="8*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" >Hi, I am a nice TextBlock.</TextBlock>
+                <TextBox Grid.Row="1" x:Name="TextToSound" HorizontalAlignment="Stretch" Text="{Binding pollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            </Grid>
+            
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0"> Voice </Button>
+                <Button Grid.Row="1"> Help </Button>
+                <!-- TODO: Add in v1.1
+                <Button Grid.Row="2"> Last </Button>
+                <Button Grid.Row="3"> Next </Button>
+                -->
+            </Grid>
+        </Grid>
+        
+        <Grid Grid.Row="2" x:Name="OperationGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" x:Name="PlayButton" Click="PlayButton_OnClick">Play</Button>
+            <Button Grid.Column="2" x:Name="SaveButton" Click="SaveButton_OnClick">Save</Button>
+        </Grid>
+        
     </Grid>
 </Window>

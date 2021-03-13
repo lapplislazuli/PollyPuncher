@@ -36,9 +36,14 @@ namespace PollyPuncher
             this.DataContext = this;
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void PlayButton_OnClick(object sender, RoutedEventArgs e)
         {
             pc.Call(pollyProps.textToPlay);
+        }
+
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
