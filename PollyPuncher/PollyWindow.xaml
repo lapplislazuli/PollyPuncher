@@ -30,10 +30,10 @@
                     <ColumnDefinition Width="6*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Slider Grid.Row="0" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
-                <Slider Grid.Row="1" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
-                <Button Grid.Row="0" Grid.Column="1">Device A</Button>
-                <Button Grid.Row="1" Grid.Column="1">Device B</Button>
+                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=audioProps.volumeA}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=audioProps.volumeB}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding audioProps.deviceA}" ItemsSource="{Binding Path=audioProps.deviceNames}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding audioProps.deviceB}" ItemsSource="{Binding Path=audioProps.deviceNames}"/>
             </Grid>
         </Grid>
         

@@ -38,7 +38,6 @@ namespace PollyPuncher
             this.PollyProps = pollyProps;
             this.AudioProps = audioProps;
             
-            // TODO: Set Uwi Config
             //testAmazonKit();
         
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NAudio.Wave;
+using System.Linq;
 
 namespace PollyPuncher
 {
@@ -15,10 +16,20 @@ namespace PollyPuncher
         //TODO: Add the selection of the Audio Properties
         public int deviceA { get; set; }
         public int deviceB { get; set; }
-        
-        public double volumeA { get; set; } // Volume how loud in %, 0 is silent and 100 is full volume
-        public double volumeB { get; set; } // Volume how loud in %, 0 is silent and 100 is full volume
 
-        public List<DirectSoundDeviceInfo> directSoundDeviceInfos { get; private set; } = DirectSoundOut.Devices.ToList();
+        public double volumeA { get; set; } = 50.0; // Volume how loud in %, 0 is silent and 100 is full volume
+        public double volumeB { get; set; } = 50.0; // Volume how loud in %, 0 is silent and 100 is full volume
+
+        private List<DirectSoundDeviceInfo> directSoundDeviceInfos
+        {
+            get =>  DirectSoundOut.Devices.ToList();
+        } 
+
+        public List<string> deviceNames
+        {
+            get => directSoundDeviceInfos.Select(a => a.Description).ToList();
+            private set { }
+        }
+
     }
 }
