@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -43,7 +45,35 @@ namespace PollyPuncher
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            var result = saveFileDialog.ShowDialog();
+            switch (result)
+            {
+                case System.Windows.Forms.DialogResult.OK:
+                    throw new NotImplementedException();
+                    break;
+                case System.Windows.Forms.DialogResult.Cancel:
+                default:
+                    throw new InvalidDataException("This is not a file bro");
+                    break;
+            }
+        }
+        
+        private void BtnKeyFileOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var fileDialog = new System.Windows.Forms.OpenFileDialog();
+            var result = fileDialog.ShowDialog();
+            switch (result)
+            {
+                case System.Windows.Forms.DialogResult.OK:
+                    var file = fileDialog.FileName;
+                    pollyProps.apiKey = file;
+                    break;
+                case System.Windows.Forms.DialogResult.Cancel:
+                default:
+                    throw new InvalidDataException("This is not a file bro");
+                    break;
+            }
         }
     }
 }

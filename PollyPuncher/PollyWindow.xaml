@@ -19,7 +19,7 @@
                     <ColumnDefinition Width="8*" />
                 </Grid.ColumnDefinitions>
             <Grid x:Name="KeySelectGrid" Grid.Column="0">
-                <Button> Key </Button>
+                <Button x:Name="KeyOpenButton" Click="BtnKeyFileOpen_Click"> Key </Button>
             </Grid>
             <Grid x:Name="AudioPanelGrid" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -33,7 +33,7 @@
                 <Slider Grid.Row="0" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
                 <Slider Grid.Row="1" Grid.Column="0"  TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
                 <Button Grid.Row="0" Grid.Column="1">Device A</Button>
-                <Button Grid.Row="1" Grid.Column="1">Device A</Button>
+                <Button Grid.Row="1" Grid.Column="1">Device B</Button>
             </Grid>
         </Grid>
         
