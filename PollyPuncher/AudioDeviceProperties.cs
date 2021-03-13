@@ -1,4 +1,9 @@
-﻿namespace PollyPuncher
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using NAudio.Wave;
+
+namespace PollyPuncher
 {
     
     /*
@@ -8,6 +13,9 @@
     public class AudioDeviceProperties
     {
         //TODO: Add the selection of the Audio Properties
-        private string device { get; set; }
+        public int deviceA { get; set; }
+        public int deviceB { get; set; }
+        
+        List<DirectSoundDeviceInfo> directSoundDeviceInfos =  DirectSoundOut.Devices.ToList();
     }
 }

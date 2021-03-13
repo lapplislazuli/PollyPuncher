@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net.Http;
+using System.Threading;
 using System.Windows.Automation;
 using Amazon;
 using Amazon.Polly;
 using Amazon.Polly.Model;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+using NAudio.Wave;
 
 namespace PollyPuncher
 {
@@ -28,8 +32,6 @@ namespace PollyPuncher
     {
         private PollyProperties PollyProps { get; set; }
         private AudioDeviceProperties AudioProps { get; set; }
-
-        private AmazonPollyClient _client;
         
         public PollyCaller(PollyProperties pollyProps, AudioDeviceProperties audioProps)
         {
@@ -37,8 +39,8 @@ namespace PollyPuncher
             this.AudioProps = audioProps;
             
             // TODO: Set Uwi Config
-            testAmazonKit();
-            
+            //testAmazonKit();
+        
         }
 
         public void Call(String text)
@@ -65,6 +67,7 @@ namespace PollyPuncher
             var credentialFile = new Dictionary<string, string>();
             foreach (var row in File.ReadAllLines(path))
                 credentialFile.Add(row.Split('=')[0], string.Join("=",row.Split('=').Skip(1).ToArray()));
+            
             // Create Amazon Credentials
             var options = new CredentialProfileOptions
             {
@@ -90,30 +93,99 @@ namespace PollyPuncher
                 {
                     var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
                     {
-                        //LexiconNames = new List<string> {
-                        //    "example"
-                        //},
                         OutputFormat = "mp3",
                         SampleRate = "8000",
-                        Text = "All Gaul is divided into three parts",
+                        Text = "Ich bin der wütende Unterbrecher Hans. ",
                         TextType = "text",
-                        VoiceId = "Joanna"
+                        VoiceId = "Hans" // One of Hans, Jenny , ...
                     });
                     response.Wait();
 
                     var res = response.Result;
             
-                    //MemoryStream audioStream = (MemoryStream) res.AudioStream;
+                    var audioStream = res.AudioStream;
                     string contentType = res.ContentType;
                     int requestCharacters = res.RequestCharacters;
+                    
+                    
+                    using (FileStream fs = File.Create("tmp.mp3"))
+                    {
+                        audioStream.CopyTo(fs);
+                        fs.Flush();
+                    }
+
+                    var devices = WaveOut.DeviceCount;
+                    var directSoundDeviceInfos =  DirectSoundOut.Devices;
+
+                    PlaySound("tmp.mp3",0);
+                    PlaySound("tmp.mp3", 2);
+                    //PlaySound(audioStream,0);
                     
                     // For debugging
                     int waiter = 1;
                 }
             }
-            
+
         }
-        
+        public void PlaySound(string path, int audioDevice = 0 , Action done = null)
+        {
+            FileStream ms = File.OpenRead(path);
+            var rdr = new Mp3FileReader(ms);
+            // TODO: Can I use MemoryStream here?
+            WaveStream wavStream = WaveFormatConversionStream.CreatePcmStream(rdr);
+            var baStream = new BlockAlignReductionStream(wavStream);
+            
+            var waveOut = new WaveOut();
+            waveOut.DeviceNumber = audioDevice;
+            
+            waveOut.Init(baStream);
+            waveOut.Play();
+            var bw = new BackgroundWorker();
+            bw.DoWork += (s, o) =>
+            {
+                while (waveOut.PlaybackState == PlaybackState.Playing)
+                {
+                    Thread.Sleep(150);
+                }
+                waveOut.Dispose();
+                baStream.Dispose();
+                wavStream.Dispose();
+                rdr.Dispose();
+                ms.Dispose();
+                if (done != null) done();
+            };
+            bw.RunWorkerAsync();
+        }
+        //TODO: Figure this out
+        /*
+        public void PlaySound(Stream audioStream, int audioDevice = 0 , Action done = null)
+        {
+            ReadFullyStream(audioStream);
+            WaveStream wavStream = WaveFormatConversionStream.CreatePcmStream(audioStream);
+            var baStream = new BlockAlignReductionStream(wavStream);
+            
+            var waveOut = new WaveOut();
+            waveOut.DeviceNumber = audioDevice;
+            
+            waveOut.Init(baStream);
+            waveOut.Play();
+            var bw = new BackgroundWorker();
+            bw.DoWork += (s, o) =>
+            {
+                while (waveOut.PlaybackState == PlaybackState.Playing)
+                {
+                    Thread.Sleep(150);
+                }
+                waveOut.Dispose();
+                baStream.Dispose();
+                wavStream.Dispose();
+                rdr.Dispose();
+                ms.Dispose();
+                if (done != null) done();
+            };
+            bw.RunWorkerAsync();
+        }
+        */
     }
     
     

@@ -8,6 +8,6 @@
         Title="PollyWindow" Height="450" Width="800">
     <Grid>
         <TextBlock>Hi, I am a nice TextBlock.</TextBlock>
-        
+        <Button Click="ButtonBase_OnClick">Feuer Mich</Button>
     </Grid>
 </Window>

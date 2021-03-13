@@ -6,8 +6,16 @@
      */
     public class PollyProperties
     {
-        private string apiKey { get; set; }     // Your API Key for Request Signing
-        private string voice { get; set; }      // The Voice to use (e.g. German - Hans)
-        private string text { get; set; }       // The Text to Synthesize
+        public string apiKey { get; set; }     // Your API Key for Request Signing
+        public string voice { get; set; }      // The Voice to use (e.g. German - Hans)
+        public string text { get; set; }       // The Text to Synthesize
+
+        public enum voices
+        {
+            JENNY,
+            HANS,
+            //TODO: Which ones are actually availible
+            DEINEMUDAA
+        }
     }
 }

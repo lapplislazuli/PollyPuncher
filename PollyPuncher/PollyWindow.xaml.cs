@@ -22,18 +22,24 @@ namespace PollyPuncher
     {
         private PollyProperties pollyProps;
         private AudioDeviceProperties audioProps;
-        
+        private PollyCaller pc;
         public PollyWindow()
         {
 
             this.pollyProps = App._pollyProperties;
             this.audioProps = App._audioDeviceProperties;
 
-            PollyCaller pc = new PollyCaller(pollyProps, audioProps);
+            pc = new PollyCaller(pollyProps, audioProps);
             
             //pc.Call("Hi");
             InitializeComponent();
 
+        }
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            pc.testAmazonKit();
+            //throw new NotImplementedException();
         }
     }
 }
