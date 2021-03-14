@@ -14,6 +14,7 @@ using Amazon.Polly;
 using Amazon.Polly.Model;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
 namespace PollyPuncher
@@ -37,8 +38,9 @@ namespace PollyPuncher
 
         private Amazon.Runtime.CredentialManagement.CredentialProfile _awsProfile;
         private int HASHCODELENGTH { get; } = 8;
-        private string sound_dir_path = Path.GetRelativePath(".","sounds");
         private System.IO.DirectoryInfo sound_dir;
+
+        private Dictionary<string, Stream> _knownHashes = new Dictionary<string, Stream>();
         
         public PollyCaller(PollyProperties pollyProps, AudioDeviceProperties audioProps)
         {
@@ -56,6 +58,7 @@ namespace PollyPuncher
          */
         private void setupSoundsFolder()
         {
+            string sound_dir_path = Path.GetRelativePath(".","sounds");
             // Create the "sounds" directory if not exists
             if (!Directory.Exists(sound_dir_path))
             {
@@ -98,53 +101,62 @@ namespace PollyPuncher
         {
             setAWSProfile();
             
-            // Store the Amazon Profile in the Credentials Engine for later use
-            var netSDKFile = new NetSDKCredentialsFile();
-            netSDKFile.RegisterProfile(_awsProfile);
+            string tempName = temporaryName();
+            string tempFilePath = Path.GetFullPath( tempName + ".mp3",sound_dir.FullName);
             
-            // This chain uses the credentials to create a token for usage, 
-            // Later the token is used in the Credentials
-            // The chain stores it into awsCredentials, that is used for the client.
-            var chain = new CredentialProfileStoreChain();
-            AWSCredentials awsCredentials;
-            // use awsCredentials
-            if (chain.TryGetAWSCredentials("polly_profile", out awsCredentials))
+            Stream audioStream = null;
+            if (_knownHashes.ContainsKey(tempName))
             {
-                using (var client = new AmazonPollyClient(awsCredentials, _awsProfile.Region))
+                audioStream = _knownHashes[tempName];
+            }
+            else
+            {
+                audioStream = makeAWSCall();
+                _knownHashes[tempName] = audioStream;
+            }
+            
+            if(!File.Exists(tempFilePath)){
+                /*TODO: Without the existence check, the line below throws a marshal-error 
+                /*The file-handle does not seem to be closed properly.
+                */
+                using (FileStream fs = File.Create(tempFilePath))
                 {
-                    var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
-                    {
-                        OutputFormat = "mp3",
-                        SampleRate = PollyProps.sampling.ToString(),
-                        Text = PollyProps.textToPlay,
-                        TextType = "text",
-                        VoiceId = PollyProps.voice // One of Hans, Jenny , ...
-                    });
-                    response.Wait();
-
-                    var res = response.Result;
-                    var audioStream = res.AudioStream;
-
-                    string tempName = temporaryName();
-                    string tempFilePath = Path.GetFullPath( tempName + ".mp3",sound_dir.FullName);
-                    
-                    using (FileStream fs = File.Create(tempFilePath))
-                    {
-                        audioStream.CopyTo(fs);
-                        fs.Flush();
-                    }
-
-                    PlaySound(tempFilePath,AudioProps.deviceA -1);
-                    if (AudioProps.deviceA != AudioProps.deviceB)
-                        PlaySound(tempFilePath,AudioProps.deviceB -1 );
+                    audioStream.CopyTo(fs);
+                    fs.Flush();
                 }
             }
+        
+            // The audio-devices must be decremented by one, as the "default" for NAudio is -1 while its 0 for Windows.
+            PlaySound(tempFilePath,AudioProps.deviceA -1);
+            if (AudioProps.deviceA != AudioProps.deviceB)
+                PlaySound(tempFilePath,AudioProps.deviceB -1 );
         }
 
         public void SaveToFile(string mp3Filename)
         {
             setAWSProfile();
-            
+
+            string tempName = temporaryName();
+            Stream audioStream = null;
+            if (_knownHashes.ContainsKey(tempName))
+            {
+                audioStream = _knownHashes[tempName];
+            }
+            else
+            {
+                audioStream = makeAWSCall();
+                _knownHashes[tempName] = audioStream;
+            }
+
+            using (FileStream fs = File.Create(mp3Filename))
+            {
+                audioStream.CopyTo(fs);
+                fs.Flush();
+            }
+        }
+        
+        private Stream makeAWSCall()
+        {
             // Store the Amazon Profile in the Credentials Engine for later use
             var netSDKFile = new NetSDKCredentialsFile();
             netSDKFile.RegisterProfile(_awsProfile);
@@ -154,13 +166,13 @@ namespace PollyPuncher
             // The chain stores it into awsCredentials, that is used for the client.
             var chain = new CredentialProfileStoreChain();
             AWSCredentials awsCredentials;
+            Stream audioStream = null;
             // use awsCredentials
             if (chain.TryGetAWSCredentials("polly_profile", out awsCredentials))
             {
                 using (var client = new AmazonPollyClient(awsCredentials, _awsProfile.Region))
                 {
-                    
-                    var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
+                    var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest
                     {
                         OutputFormat = "mp3",
                         SampleRate = PollyProps.sampling.ToString(),
@@ -171,20 +183,13 @@ namespace PollyPuncher
                     response.Wait();
 
                     var res = response.Result;
-            
-                    var audioStream = res.AudioStream;
-                    
-                    string tempName = temporaryName();
-                    
-                    using (FileStream fs = File.Create(mp3Filename))
-                    {
-                        audioStream.CopyTo(fs);
-                        fs.Flush();
-                    }
+                    audioStream = res.AudioStream;
                 }
             }
+
+            return audioStream;
         }
-        
+
         private void PlaySound(string path, int audioDevice = 0 , Action done = null)
         {
             FileStream ms = File.OpenRead(path);
@@ -198,6 +203,7 @@ namespace PollyPuncher
             
             waveOut.Init(baStream);
             waveOut.Play();
+            
             var bw = new BackgroundWorker();
             bw.DoWork += (s, o) =>
             {
@@ -214,6 +220,7 @@ namespace PollyPuncher
             };
             bw.RunWorkerAsync();
         }    
+        
         /**
          * This method reads the polly props and creates a hashcode for it.
          * The used hash-method is MD5, which gets cut down to 8 digits.
