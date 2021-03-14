@@ -46,11 +46,15 @@ namespace PollyPuncher
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".mp3";
             var result = saveFileDialog.ShowDialog();
             switch (result)
             {
                 case System.Windows.Forms.DialogResult.OK:
-                    throw new NotImplementedException();
+                    var file = saveFileDialog.FileName;
+                    pc.SaveToFile(file);
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
@@ -62,6 +66,7 @@ namespace PollyPuncher
         private void BtnKeyFileOpen_Click(object sender, RoutedEventArgs e)
         {
             var fileDialog = new OpenFileDialog();
+            fileDialog.RestoreDirectory = false;
             var result = fileDialog.ShowDialog();
             switch (result)
             {

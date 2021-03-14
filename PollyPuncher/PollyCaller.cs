@@ -109,7 +109,48 @@ namespace PollyPuncher
                 }
             }
         }
-        
+
+        public void SaveToFile(string mp3Filename)
+        {
+            setAWSProfile();
+            
+            // Store the Amazon Profile in the Credentials Engine for later use
+            var netSDKFile = new NetSDKCredentialsFile();
+            netSDKFile.RegisterProfile(_awsProfile);
+            
+            // This chain uses the credentials to create a token for usage, 
+            // Later the token is used in the Credentials
+            // The chain stores it into awsCredentials, that is used for the client.
+            var chain = new CredentialProfileStoreChain();
+            AWSCredentials awsCredentials;
+            // use awsCredentials
+            if (chain.TryGetAWSCredentials("polly_profile", out awsCredentials))
+            {
+                using (var client = new AmazonPollyClient(awsCredentials, _awsProfile.Region))
+                {
+                    var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
+                    {
+                        OutputFormat = "mp3",
+                        SampleRate = "16000",
+                        Text = PollyProps.textToPlay,
+                        TextType = "text",
+                        VoiceId = PollyProps.voice // One of Hans, Jenny , ...
+                    });
+                    response.Wait();
+
+                    var res = response.Result;
+            
+                    var audioStream = res.AudioStream;
+                    
+                    
+                    using (FileStream fs = File.Create(mp3Filename))
+                    {
+                        audioStream.CopyTo(fs);
+                        fs.Flush();
+                    }
+                }
+            }
+        }
         
         private void PlaySound(string path, int audioDevice = 0 , Action done = null)
         {
