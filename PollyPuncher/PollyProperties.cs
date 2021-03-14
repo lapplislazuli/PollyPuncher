@@ -15,16 +15,18 @@ namespace PollyPuncher
 
         public int sampling { get; set; } = 16000; //Sampling Rate in hz, use either 4k,8k,16k,32k
 
+        /*
+         * According to https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
+         * All Voices should be in standard except for Kevin And Olivia
+         */
         private List<string> _voices = new List<string>()
         {
             "Nicole", 
-            //"Kevin", 
-            //"Enrique", "Tatyana", "Russell", "Olivia", "Lotte", "Geraint", "Carmen", "Mads", "Penelope", "Mia", "Joanna", "Matthew", "Brian", "Seoyeon", "Ruben", "Ricardo",
-            //"Maxim", "Lea", "Giorgio", "Carla", "Naja", "Maja", "Astrid", "Ivy", "Kimberly", "Chantal", "Amy", "Vicki", "Marlene", "Ewa", "Conchita",
-            //"Camila", "Karl", "Zeina", "Miguel", "Mathieu", "Justin", "Lucia", "Jacek", "Bianca", "Takumi", "Ines", "Gwyneth", 
-            //"Cristiano", "Mizuki", "Celine", "Zhiyu", "Jan", "Liv", "Joey", "Raveena", "Filiz", "Dora", "Salli","Aditi","Vitoria", "Emma", "Lupe","Kendra",
-            "Lea",
-            "Carmen",
+            //"Kevin",  "Olivia",
+            "Enrique", "Tatyana", "Russell", "Lotte", "Geraint", "Carmen", "Mads", "Penelope", "Mia", "Joanna", "Matthew", "Brian", "Seoyeon", "Ruben", "Ricardo",
+            "Maxim", "Lea", "Giorgio", "Carla", "Naja", "Maja", "Astrid", "Ivy", "Kimberly", "Chantal", "Amy", "Vicki", "Marlene", "Ewa", "Conchita",
+            "Camila", "Karl", "Zeina", "Miguel", "Mathieu", "Justin", "Lucia", "Jacek", "Bianca", "Takumi", "Ines", "Gwyneth", 
+            "Cristiano", "Mizuki", "Celine", "Zhiyu", "Jan", "Liv", "Joey", "Raveena", "Filiz", "Dora", "Salli","Aditi","Vitoria", "Emma", "Lupe","Kendra",
             "Hans"
         };
         
