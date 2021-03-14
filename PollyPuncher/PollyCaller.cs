@@ -127,9 +127,10 @@ namespace PollyPuncher
             }
         
             // The audio-devices must be decremented by one, as the "default" for NAudio is -1 while its 0 for Windows.
-            PlaySound(tempFilePath,AudioProps.deviceA -1);
+            PlaySound(tempFilePath,AudioProps.deviceA -1 , AudioProps.volumeA);
+            // Just play the second audio if there is a different selected
             if (AudioProps.deviceA != AudioProps.deviceB)
-                PlaySound(tempFilePath,AudioProps.deviceB -1 );
+                PlaySound(tempFilePath,AudioProps.deviceB -1 , AudioProps.volumeB);
         }
 
         public void SaveToFile(string mp3Filename)
@@ -190,7 +191,7 @@ namespace PollyPuncher
             return audioStream;
         }
 
-        private void PlaySound(string path, int audioDevice = 0 , Action done = null)
+        private void PlaySound(string path, int audioDevice = 0, double audioVolume=50.0, Action done = null)
         {
             FileStream ms = File.OpenRead(path);
             var rdr = new Mp3FileReader(ms);
@@ -200,6 +201,7 @@ namespace PollyPuncher
             
             var waveOut = new WaveOut();
             waveOut.DeviceNumber = audioDevice;
+            waveOut.Volume = (float) audioVolume / 100;
             
             waveOut.Init(baStream);
             waveOut.Play();
