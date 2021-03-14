@@ -27,6 +27,8 @@ namespace PollyPuncher
         public AudioDeviceProperties AudioProps  { get; set; }
 
         private PollyCaller pc;
+        
+        
         public PollyWindow()
         {
             this.PollyProps = App._pollyProperties;
@@ -43,9 +45,17 @@ namespace PollyPuncher
 
         private void PlayButton_OnClick(object sender, RoutedEventArgs e)
         {
-            pc.Call();
+            PlaySound();
         }
 
+        private void PlaySound()
+        {
+            pc.Call();
+        }
+        
+        private void PlayHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { PlaySound(); }
+
+        
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();

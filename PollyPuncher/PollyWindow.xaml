@@ -7,6 +7,21 @@
         mc:Ignorable="d"
         Closing="PollyWindow_OnClosing"
         Title="PollyWindow" Height="450" Width="800">
+    
+    <Window.Resources>
+        <RoutedUICommand x:Key="PlayHotkey" Text="Text" />
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource PlayHotkey}" 
+                        Executed="PlayHotKey_Executed" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource PlayHotkey}" />
+    </Window.InputBindings>
+
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
@@ -50,7 +65,7 @@
                     <RowDefinition Height="8*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" >Hi, I am a nice TextBlock.</TextBlock>
-                <TextBox Grid.Row="1" x:Name="TextToSound" HorizontalAlignment="Stretch" Text="{Binding PollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox Grid.Row="1" x:Name="TextToSound" HorizontalAlignment="Stretch" Text="{Binding PollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" AcceptsTab="True" TextWrapping="WrapWithOverflow"></TextBox>
             </Grid>
             
             <Grid Grid.Column="1">
