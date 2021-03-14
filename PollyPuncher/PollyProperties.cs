@@ -13,6 +13,8 @@ namespace PollyPuncher
         public string voice { get; set; } = "Hans";    // The Voice to use (e.g. German - Hans)
         public string textToPlay { get; set; } = "Beispiel Text für fröhliche Menschen.";      // The Text to Synthesize
 
+        public int sampling { get; set; } = 16000; //Sampling Rate in hz, use either 4k,8k,16k,32k
+
         private List<string> _voices = new List<string>()
         {
             "Nicole", 

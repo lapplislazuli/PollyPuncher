@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net.Http;
+using System.Security.Policy;
+using System.Text;
 using System.Threading;
 using System.Windows.Automation;
 using Amazon;
@@ -34,17 +36,45 @@ namespace PollyPuncher
         private AudioDeviceProperties AudioProps { get; set; }
 
         private Amazon.Runtime.CredentialManagement.CredentialProfile _awsProfile;
+        private int HASHCODELENGTH { get; } = 8;
+        private string sound_dir_path = Path.GetRelativePath(".","sounds");
+        private System.IO.DirectoryInfo sound_dir;
         
         public PollyCaller(PollyProperties pollyProps, AudioDeviceProperties audioProps)
         {
             this.PollyProps = pollyProps;
             this.AudioProps = audioProps;
+
+            setupSoundsFolder();
         }
 
+        /**
+         * This method creates or cleans a nearby folder "sounds" where the mp3 files are stored temporarily.
+         * I decided to clean it on system startup, in case a user wants to look at the files after closing.
+         * I did purposefully keep and read it, as otherwise this relative folder will get very crowded after a while
+         * and might take up significant space for the user. 
+         */
+        private void setupSoundsFolder()
+        {
+            // Create the "sounds" directory if not exists
+            if (!Directory.Exists(sound_dir_path))
+            {
+                sound_dir = Directory.CreateDirectory(sound_dir_path);
+            }
+            // If it exists, clean it from all mp3 files of the last run
+            else
+            {
+                sound_dir = new DirectoryInfo(sound_dir_path);
+                foreach (FileInfo file in sound_dir.GetFiles())
+                {
+                    file.Delete(); 
+                }
+            }
+        }
+        
         private void setAWSProfile()
         {
             // Read the Credentials and store them shortly in an array
-            //var path = @"C:\Users\lguts\Code\PollyPuncher\rootkey.csv";
             string path = PollyProps.apiKey;
             
             var credentialFile = new Dictionary<string, string>();
@@ -85,7 +115,7 @@ namespace PollyPuncher
                     var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
                     {
                         OutputFormat = "mp3",
-                        SampleRate = "16000",
+                        SampleRate = PollyProps.sampling.ToString(),
                         Text = PollyProps.textToPlay,
                         TextType = "text",
                         VoiceId = PollyProps.voice // One of Hans, Jenny , ...
@@ -93,19 +123,20 @@ namespace PollyPuncher
                     response.Wait();
 
                     var res = response.Result;
-            
                     var audioStream = res.AudioStream;
+
+                    string tempName = temporaryName();
+                    string tempFilePath = Path.GetFullPath( tempName + ".mp3",sound_dir.FullName);
                     
-                    
-                    using (FileStream fs = File.Create("tmp.mp3"))
+                    using (FileStream fs = File.Create(tempFilePath))
                     {
                         audioStream.CopyTo(fs);
                         fs.Flush();
                     }
 
-                    PlaySound("tmp.mp3",AudioProps.deviceA -1);
+                    PlaySound(tempFilePath,AudioProps.deviceA -1);
                     if (AudioProps.deviceA != AudioProps.deviceB)
-                        PlaySound("tmp.mp3",AudioProps.deviceB -1 );
+                        PlaySound(tempFilePath,AudioProps.deviceB -1 );
                 }
             }
         }
@@ -128,10 +159,11 @@ namespace PollyPuncher
             {
                 using (var client = new AmazonPollyClient(awsCredentials, _awsProfile.Region))
                 {
+                    
                     var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest 
                     {
                         OutputFormat = "mp3",
-                        SampleRate = "16000",
+                        SampleRate = PollyProps.sampling.ToString(),
                         Text = PollyProps.textToPlay,
                         TextType = "text",
                         VoiceId = PollyProps.voice // One of Hans, Jenny , ...
@@ -142,6 +174,7 @@ namespace PollyPuncher
             
                     var audioStream = res.AudioStream;
                     
+                    string tempName = temporaryName();
                     
                     using (FileStream fs = File.Create(mp3Filename))
                     {
@@ -180,8 +213,32 @@ namespace PollyPuncher
                 if (done != null) done();
             };
             bw.RunWorkerAsync();
+        }    
+        /**
+         * This method reads the polly props and creates a hashcode for it.
+         * The used hash-method is MD5, which gets cut down to 8 digits.
+         * The number of digits is at the moment hardcoded in the PollyCaller as a constant.
+         * The hashed properties are Text, Voice & SamplingRate.
+         */
+        private string temporaryName()
+        {
+            string input = PollyProps.textToPlay + "+" + PollyProps.voice + "+" + PollyProps.voice;
+            string output;
+            using (var provider = System.Security.Cryptography.MD5.Create())
+            {
+                StringBuilder builder = new StringBuilder();                           
+
+                foreach (byte b in provider.ComputeHash(Encoding.UTF8.GetBytes(input)))
+                    builder.Append(b.ToString("x2").ToLower());
+
+                output = builder.ToString();
+            }
+
+            return output.Substring(0, this.HASHCODELENGTH);
         }
+
     }
     
+
     
 }

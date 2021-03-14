@@ -30,10 +30,10 @@
                     <ColumnDefinition Width="6*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=audioProps.volumeA}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
-                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=audioProps.volumeB}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
-                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding audioProps.deviceA}" ItemsSource="{Binding Path=audioProps.deviceNames}"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding audioProps.deviceB}" ItemsSource="{Binding Path=audioProps.deviceNames}"/>
+                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.volumeA}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.volumeB}" TickPlacement="BottomRight" TickFrequency="5" Minimum="0" Maximum="100" VerticalAlignment="Center"></Slider>
+                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceA}" ItemsSource="{Binding Path=AudioProps.deviceNames}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceB}" ItemsSource="{Binding Path=AudioProps.deviceNames}"/>
             </Grid>
         </Grid>
         
@@ -49,21 +49,29 @@
                     <RowDefinition Height="8*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" >Hi, I am a nice TextBlock.</TextBlock>
-                <TextBox Grid.Row="1" x:Name="TextToSound" HorizontalAlignment="Stretch" Text="{Binding pollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox Grid.Row="1" x:Name="TextToSound" HorizontalAlignment="Stretch" Text="{Binding PollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
             </Grid>
             
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="2*" />
                     <RowDefinition Height="1*" />
+                    <RowDefinition Height="2*" />
                     <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
-                <ComboBox Grid.Row="0" ItemsSource="{Binding Path = pollyProps.Voices}" SelectedValue="{Binding Path = pollyProps.voice}"> </ComboBox>
-                <Button Grid.Row="1"> Help </Button>
+                <Button Grid.Row="0"> Help </Button>
+                <TextBlock Grid.Row="2">Voice Explainer</TextBlock>
+                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.voice}"> </ComboBox>
+                <TextBlock Grid.Row="4">Sampling Explainer</TextBlock>
+                <!-- TODO: Inspect why Sampling Rate 32k is not working! -->
+                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.sampling}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center"></Slider>
                 <!-- TODO: Add in v1.1
-                <Button Grid.Row="2"> Last </Button>
-                <Button Grid.Row="3"> Next </Button>
+                <Button Grid.Row="6"> Last </Button>
+                <Button Grid.Row="7"> Next </Button>
                 -->
             </Grid>
         </Grid>

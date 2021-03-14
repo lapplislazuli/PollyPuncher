@@ -22,16 +22,16 @@ namespace PollyPuncher
     /// </summary>
     public partial class PollyWindow : Window
     {
-        public PollyProperties pollyProps { get; set; }
-        public AudioDeviceProperties audioProps  { get; set; }
+        public PollyProperties PollyProps { get; set; }
+        public AudioDeviceProperties AudioProps  { get; set; }
 
         private PollyCaller pc;
         public PollyWindow()
         {
-            this.pollyProps = App._pollyProperties;
-            this.audioProps = App._audioDeviceProperties;
+            this.PollyProps = App._pollyProperties;
+            this.AudioProps = App._audioDeviceProperties;
 
-            pc = new PollyCaller(pollyProps, audioProps);
+            pc = new PollyCaller(PollyProps, AudioProps);
             
             InitializeComponent();
             
@@ -72,7 +72,7 @@ namespace PollyPuncher
             {
                 case System.Windows.Forms.DialogResult.OK:
                     var file = fileDialog.FileName;
-                    pollyProps.apiKey = file;
+                    PollyProps.apiKey = file;
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
