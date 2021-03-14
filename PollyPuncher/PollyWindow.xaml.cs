@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace PollyPuncher
 {
@@ -34,7 +35,7 @@ namespace PollyPuncher
             this.PollyProps = App._pollyProperties;
             this.AudioProps = App._audioDeviceProperties;
 
-            App.loadSettings();
+            App.LoadSettings();
             
             pc = new PollyCaller(PollyProps, AudioProps);
             
@@ -50,7 +51,14 @@ namespace PollyPuncher
 
         private void PlaySound()
         {
-            pc.Call();
+            if (string.IsNullOrEmpty(PollyProps.apiKey) || PollyProps.apiKey.Contains(","))
+            {
+                MessageBox.Show("You need to set a Key before you can use the Application","Key Required!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+            }
+            else
+            {
+                pc.Call();
+            }
         }
         
         private void PlayHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { PlaySound(); }
@@ -58,6 +66,11 @@ namespace PollyPuncher
         
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(PollyProps.apiKey) || PollyProps.apiKey.Contains(","))
+            {
+                MessageBox.Show("You need to set a Key before you can use the Application","Key Required!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                return;
+            }
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             
             saveFileDialog.AddExtension = true;
@@ -89,14 +102,17 @@ namespace PollyPuncher
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
-                    throw new InvalidDataException("This is not a file bro");
-                    break;
+                {
+                    MessageBox.Show("You need to set a Key before you can use the Application","Key Required!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                    break; 
+                }
+                    
             }
         }
         
         private void PollyWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            App.saveSettings();
+            App.SaveSettings();
         }
     }
 }
