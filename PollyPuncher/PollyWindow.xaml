@@ -17,28 +17,28 @@
     <Window.Resources>
         <RoutedUICommand x:Key="PlayHotkey" Text="Text" />
         
-        <Style x:Key="AudioSelect" TargetType="ComboBox">
+        <Style x:Key="AudioSelect" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
              <Setter Property="HorizontalAlignment" Value="Stretch"/>
              <Setter Property="VerticalAlignment" Value="Stretch"/>
              <Setter Property="Margin" Value="5"/>
              <Setter Property="Padding" Value="4"/>
              <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
-        <Style x:Key="VolumeSlider" TargetType="Slider">
+        <Style x:Key="VolumeSlider" TargetType="Slider" BasedOn="{StaticResource MaterialDesignSlider}">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="3"/> 
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TickPlacement" Value="Both"/>
-            <Setter Property="Ticks" Value="5"/>
+            <Setter Property="Ticks" Value="0,10,20,30,40,50,60,70,80,90,100"/>
         </Style>
-        <Style x:Key="VoiceSelect" TargetType="ComboBox">
+        <Style x:Key="VoiceSelect" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Margin" Value="3"/>
             <Setter Property="Padding" Value="2"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
-        <Style x:Key="TTSBox" TargetType="TextBox">
+        <Style x:Key="TTSBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
             <Setter Property="Margin" Value="4"/>
             <Setter Property="Padding" Value="3"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -50,13 +50,17 @@
             <Setter Property="Margin" Value="0.5,3,3,0.25"/>
             <Setter Property="VerticalContentAlignment" Value="Top"/>
         </Style>
-        <Style x:Key="ActionButton" TargetType="Button">
+        <Style x:Key="ActionButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="4"/>
             <!--<Setter Property="VerticalContentAlignment" Value="Center"/>-->
         </Style>
         
-        <Style x:Key="HelpButton" TargetType="Button">
+        <Style x:Key="KeyButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+            
+        </Style>
+        
+        <Style x:Key="HelpButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
             <Setter Property="Margin" Value="3"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
@@ -86,7 +90,9 @@
                     <ColumnDefinition Width="8*" />
                 </Grid.ColumnDefinitions>
             <Grid x:Name="KeySelectGrid" Grid.Column="0">
-                <Button x:Name="KeyOpenButton" Click="BtnKeyFileOpen_Click"> Key </Button>
+                <Button x:Name="KeyOpenButton" Click="BtnKeyFileOpen_Click" Style="{StaticResource KeyButton}" >
+                    <materialDesign:PackIcon Kind="Key"/>
+                </Button>
             </Grid>
             <Grid x:Name="AudioPanelGrid" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -97,8 +103,8 @@
                     <ColumnDefinition Width="6*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.volumeA}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"></Slider>
-                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.volumeB}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"></Slider>
+                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.volumeA}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
+                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.volumeB}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
                 <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceA}" ItemsSource="{Binding Path=AudioProps.deviceNames}" Style="{StaticResource AudioSelect}"/>
                 <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceB}" ItemsSource="{Binding Path=AudioProps.deviceNames}" Style="{StaticResource AudioSelect}"/>
             </Grid>
@@ -115,7 +121,7 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="8*" />
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Hi, I am a nice TextBlock.</Label>
+                <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Enter your Text below</Label>
                 <TextBox Grid.Row="1" x:Name="TextToSound"  Text="{Binding PollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TTSBox}"/>
             </Grid>
             
@@ -128,10 +134,10 @@
                     <RowDefinition Height="1.5*" />
                     <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0"> Help </Button>
-                <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Voice Explainer</Label>
+                <Button Grid.Row="0" Style="{StaticResource HelpButton}"> Help </Button>
+                <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Voice:</Label>
                 <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.voice}" Style="{StaticResource VoiceSelect}"/>
-                <Label Grid.Row="4" Style="{StaticResource HeaderLabel}">Sampling Explainer</Label>
+                <Label Grid.Row="4" Style="{StaticResource HeaderLabel}">Sampling-Rate:</Label>
                 <!-- TODO: Inspect why Sampling Rate 32k is not working! -->
                 <Slider Grid.Row="5" Value="{Binding Path=PollyProps.sampling}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center"></Slider>
                 <!-- TODO: Add in v1.1
