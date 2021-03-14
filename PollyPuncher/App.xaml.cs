@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,15 +26,20 @@ namespace PollyPuncher
          */
         public static void LoadSettings()
         {
-            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
             var settings = configFile.AppSettings.Settings;
 
             try
             {
-                _audioDeviceProperties.deviceA = int.Parse(settings["DeviceA"].Value);
-                _audioDeviceProperties.volumeA = double.Parse(settings["VolumeA"].Value);
-                _audioDeviceProperties.deviceB = int.Parse(settings["DeviceB"].Value);
-                _audioDeviceProperties.volumeB = double.Parse(settings["VolumeB"].Value);
+                string devA = settings["DeviceA"].Value.Split(",").Last();
+                string devB = settings["DeviceB"].Value.Split(",").Last();
+                string volA = settings["VolumeA"].Value.Split(",").Last();
+                string volB = settings["VolumeB"].Value.Split(",").Last();
+                _audioDeviceProperties.deviceA = int.Parse(devA);
+                _audioDeviceProperties.volumeA = double.Parse(volA,CultureInfo.InvariantCulture);
+                _audioDeviceProperties.deviceB = int.Parse(devB);
+                _audioDeviceProperties.volumeB = double.Parse(volB,CultureInfo.InvariantCulture);
             } catch (Exception e)
             {
                 // Do nothing, if any issue was here just take default values
@@ -44,7 +50,7 @@ namespace PollyPuncher
                 string lastKey = settings["KeyFile"].Value;
                 if (settings["KeyFile"].Value != null)
                 {
-                    lastKey = lastKey.Split(",")[0];
+                    lastKey = lastKey.Split(",").Last();
                     _pollyProperties.apiKey = lastKey;
                 }
             }
@@ -56,16 +62,20 @@ namespace PollyPuncher
          */
         public static void SaveSettings()
         {
-            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             var settings = configFile.AppSettings.Settings;
 
-            settings.Clear();
+            settings.Remove("DeviceA");
+            settings.Remove("DeviceB");
+            settings.Remove("VolumeA");
+            settings.Remove("VolumeB");
+            settings.Remove("KeyFile");
             
             settings.Add("DeviceA",_audioDeviceProperties.deviceA.ToString());
-            settings.Add("VolumeA",_audioDeviceProperties.volumeA.ToString());
+            settings.Add("VolumeA",_audioDeviceProperties.volumeA.ToString("G",CultureInfo.InvariantCulture));
             
             settings.Add("DeviceB",_audioDeviceProperties.deviceB.ToString());
-            settings.Add("VolumeB",_audioDeviceProperties.volumeB.ToString());
+            settings.Add("VolumeB",_audioDeviceProperties.volumeB.ToString("G",CultureInfo.InvariantCulture));
             
             //TODO: Something is not 100% right here - the API Key gets added multiple times separated by a comma
             settings.Add("KeyFile",_pollyProperties.apiKey);
