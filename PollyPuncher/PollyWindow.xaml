@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PollyPuncher"
         mc:Ignorable="d"
+        Closing="PollyWindow_OnClosing"
         Title="PollyWindow" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>

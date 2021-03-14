@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,8 @@ namespace PollyPuncher
             this.PollyProps = App._pollyProperties;
             this.AudioProps = App._audioDeviceProperties;
 
+            App.loadSettings();
+            
             pc = new PollyCaller(PollyProps, AudioProps);
             
             InitializeComponent();
@@ -79,6 +82,11 @@ namespace PollyPuncher
                     throw new InvalidDataException("This is not a file bro");
                     break;
             }
+        }
+        
+        private void PollyWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            App.saveSettings();
         }
     }
 }
