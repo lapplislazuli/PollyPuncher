@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace PollyPuncher
@@ -32,8 +20,8 @@ namespace PollyPuncher
         
         public PollyWindow()
         {
-            this.PollyProps = App._pollyProperties;
-            this.AudioProps = App._audioDeviceProperties;
+            this.PollyProps = App.PollyProperties;
+            this.AudioProps = App.AudioDeviceProperties;
 
             App.LoadSettings();
             
@@ -51,7 +39,7 @@ namespace PollyPuncher
 
         private void PlaySound()
         {
-            if (string.IsNullOrEmpty(PollyProps.apiKey) || PollyProps.apiKey.Contains(","))
+            if (string.IsNullOrEmpty(PollyProps.ApiKey) || PollyProps.ApiKey.Contains(","))
             {
                 MessageBox.Show("You need to set a Key before you can use the Application","Key Required!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
             }
@@ -66,7 +54,7 @@ namespace PollyPuncher
         
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(PollyProps.apiKey) || PollyProps.apiKey.Contains(","))
+            if (string.IsNullOrEmpty(PollyProps.ApiKey) || PollyProps.ApiKey.Contains(","))
             {
                 MessageBox.Show("You need to set a Key before you can use the Application","Key Required!",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 return;
@@ -98,7 +86,7 @@ namespace PollyPuncher
             {
                 case System.Windows.Forms.DialogResult.OK:
                     var file = fileDialog.FileName;
-                    PollyProps.apiKey = file;
+                    PollyProps.ApiKey = file;
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:

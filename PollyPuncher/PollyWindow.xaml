@@ -102,10 +102,10 @@
                     <ColumnDefinition Width="6*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.volumeA}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
-                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.volumeB}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceA}" ItemsSource="{Binding Path=AudioProps.deviceNames}" Style="{StaticResource AudioSelect}"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.deviceB}" ItemsSource="{Binding Path=AudioProps.deviceNames}" Style="{StaticResource AudioSelect}"/>
+                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.VolumeA}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
+                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.VolumeB}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceA}" ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceB}" ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}"/>
             </Grid>
         </Grid>
         
@@ -121,7 +121,7 @@
                     <RowDefinition Height="8*" />
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Enter your Text below</Label>
-                <TextBox Grid.Row="1" x:Name="TextToSound"  Text="{Binding PollyProps.textToPlay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TTSBox}"/>
+                <TextBox Grid.Row="1" x:Name="TextToSound"  Text="{Binding PollyProps.TextToPlay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TTSBox}"/>
             </Grid>
             
             <Grid Grid.Column="1">
@@ -135,10 +135,10 @@
                 </Grid.RowDefinitions>
                 <Button Grid.Row="0" Style="{StaticResource HelpButton}"> Help </Button>
                 <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Voice:</Label>
-                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.voice}" Style="{StaticResource VoiceSelect}"/>
+                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.Voice}" Style="{StaticResource VoiceSelect}"/>
                 <Label Grid.Row="4" Style="{StaticResource HeaderLabel}">Sampling-Rate:</Label>
                 <!-- TODO: Inspect why Sampling Rate 32k is not working! -->
-                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.sampling}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center"></Slider>
+                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.SamplingRate}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center"></Slider>
                 <!-- TODO: Add in v1.1
                 <Button Grid.Row="6"> Last </Button>
                 <Button Grid.Row="7"> Next </Button>

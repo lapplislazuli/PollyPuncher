@@ -9,17 +9,17 @@ namespace PollyPuncher
      */
     public class PollyProperties 
     {
-        public string apiKey { get; set; }     // Your API Key for Request Signing
-        public string voice { get; set; } = "Hans";    // The Voice to use (e.g. German - Hans)
-        public string textToPlay { get; set; } = "Beispiel Text für fröhliche Menschen.";      // The Text to Synthesize
+        public string ApiKey { get; set; }     // Your API Key for Request Signing
+        public string Voice { get; set; } = "Hans";    // The Voice to use (e.g. German - Hans)
+        public string TextToPlay { get; set; } = "Beispiel Text für fröhliche Menschen.";      // The Text to Synthesize
 
-        public int sampling { get; set; } = 16000; //Sampling Rate in hz, use either 4k,8k,16k,32k
+        public int SamplingRate { get; set; } = 16000; //Sampling Rate in hz, use either 4k,8k,16k,32k
 
         /*
          * According to https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
          * All Voices should be in standard except for Kevin And Olivia
          */
-        private List<string> _voices = new List<string>()
+        private readonly List<string> _voices = new List<string>()
         {
             "Nicole", 
             //"Kevin",  "Olivia",
