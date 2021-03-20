@@ -72,7 +72,7 @@
     </Window.CommandBindings>
 
     <Window.InputBindings>
-        <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource PlayHotkey}" />
+        <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource PlayHotkey}"/>
     </Window.InputBindings>
 
     
@@ -89,7 +89,8 @@
                     <ColumnDefinition Width="8*" />
                 </Grid.ColumnDefinitions>
             <Grid x:Name="KeySelectGrid" Grid.Column="0">
-                <Button x:Name="KeyOpenButton" Click="BtnKeyFileOpen_Click" Style="{StaticResource KeyButton}" >
+                <Button x:Name="KeyOpenButton" Click="BtnKeyFileOpen_Click" Style="{StaticResource KeyButton}" 
+                        ToolTip="Click here to select a AWS-Keyfile. The App doesn't work without the Key. More info is found in the README. ">
                     <materialDesign:PackIcon Kind="Key"/>
                 </Button>
             </Grid>
@@ -102,10 +103,16 @@
                     <ColumnDefinition Width="6*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.VolumeA}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
-                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.VolumeB}" Minimum="0" Maximum="100" Style="{StaticResource VolumeSlider}"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceA}" ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceB}" ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}"/>
+                <Slider Grid.Row="0" Grid.Column="0" Value="{Binding Path=AudioProps.VolumeA}" Minimum="0" Maximum="100" 
+                        Style="{StaticResource VolumeSlider}" ToolTip="Output-Volume for Device A - in % of System-Set Volume"/>
+                <Slider Grid.Row="1" Grid.Column="0"  Value="{Binding Path=AudioProps.VolumeB}" Minimum="0" Maximum="100" 
+                        Style="{StaticResource VolumeSlider}" ToolTip="Output-Volume for Device B - in % of System-Set Volume"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceA}" 
+                          ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}" 
+                          ToolTip="Select an audio-device to play the sound."/>
+                <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding AudioProps.DeviceB}" 
+                          ItemsSource="{Binding Path=AudioProps.DeviceNames}" Style="{StaticResource AudioSelect}" 
+                          ToolTip="Select an audio-device to play the sound. Set to DeviceA to ignore this field."/>
             </Grid>
         </Grid>
         
@@ -133,12 +140,16 @@
                     <RowDefinition Height="1.5*" />
                     <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Style="{StaticResource HelpButton}"> Help </Button>
+                <!-- There is currently no help needed.
+                <Button Grid.Row="0" Style="{StaticResource HelpButton}" ToolTip="Show some Information"> Help </Button>
+                -->
                 <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Voice:</Label>
-                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.Voice}" Style="{StaticResource VoiceSelect}"/>
+                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.Voice}" 
+                          Style="{StaticResource VoiceSelect}" ToolTip="The Amazon Voice to be selected. Best ones are Hans (default german) and Brian (default english)."/>
                 <Label Grid.Row="4" Style="{StaticResource HeaderLabel}">Sampling-Rate:</Label>
                 <!-- TODO: Inspect why Sampling Rate 32k is not working! -->
-                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.SamplingRate}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center"></Slider>
+                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.SamplingRate}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" 
+                        Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center" ToolTip="The sampling rate for the audio - high means 'smoother' and is recommended."/>
                 <!-- TODO: Add in v1.1
                 <Button Grid.Row="6"> Last </Button>
                 <Button Grid.Row="7"> Next </Button>
@@ -152,8 +163,10 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" x:Name="PlayButton" Click="PlayButton_OnClick" Style="{StaticResource ActionButton}">Play</Button>
-            <Button Grid.Column="2" x:Name="SaveButton" Click="SaveButton_OnClick" Style="{StaticResource ActionButton}">Save</Button>
+            <Button Grid.Column="1" x:Name="PlayButton" Click="PlayButton_OnClick" Style="{StaticResource ActionButton}" 
+                    ToolTip="Play the sound to the selected Audio-Devices (Keyboard Ctrl+P)">Play</Button>
+            <Button Grid.Column="2" x:Name="SaveButton" Click="SaveButton_OnClick" Style="{StaticResource ActionButton}"
+                    ToolTip="Save the sound to a chosen file. Only .mp3 is supported.">Save</Button>
         </Grid>
         
     </Grid>
