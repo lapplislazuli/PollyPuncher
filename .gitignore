@@ -1,5 +1,7 @@
 rootkey.csv
 *.mp3
+*.idea
+.idea
 # Created by https://www.toptal.com/developers/gitignore/api/csharp,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp,rider
 
