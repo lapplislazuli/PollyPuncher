@@ -31,3 +31,7 @@ They can basically not escape your good vibes!
 
 **AWS Keyfile must be CSV** - There is currently no support to pass your tokens/id/key without using the `.csv`-file. 
 You  can follow [the guides from amazon](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-iam.html). *Note:* The created file is not actually a valid `.csv`-file, but why would amazon care? 
+
+## Note 
+
+The preview is (mostly) a recolor of the OpenMoji Parrot. 
