@@ -150,25 +150,47 @@ namespace PollyPuncher
          */
         public void SaveToFile(string mp3Filename)
         {
+            // There was an issue, when the stream was already played. 
+            // If that was the case, the stream was "at an end" and could not be saved somewhere (file was just empty). 
+            // So if the sound was played, there should be a temp file for it which we just move. 
+            // If the file is not there - remove the key and run again.
+            
             SetAwsProfile();
-
             string tempName = DeriveTemporaryName();
-            Stream audioStream = null;
+            string tempFilePath = Path.GetFullPath( tempName + ".mp3",_soundDir.FullName);
+            
             if (_knownHashes.ContainsKey(tempName))
             {
-                audioStream = _knownHashes[tempName];
+                if (File.Exists(tempFilePath)){
+                    File.Copy(tempFilePath, mp3Filename);
+                }
+                else
+                {
+                    // The file got lost - thats bad. 
+                    // Remove the key, and re-run again. This will also create the file.
+                    _knownHashes.Remove(tempName);
+                    SaveToFile(mp3Filename);
+                }
             }
-            else
+            else // The hash is not known - create it and make the file + temp file
             {
-                audioStream = MakeAwsCall();
+                Stream audioStream = MakeAwsCall();
                 _knownHashes[tempName] = audioStream;
+                
+                if(File.Exists(mp3Filename))
+                    File.Delete(mp3Filename);
+                
+                using (FileStream fs = File.Create(mp3Filename)) 
+                using (FileStream tfs = File.Create(tempFilePath))
+                {
+                    audioStream.CopyTo(fs);
+                    audioStream.CopyTo(tfs);
+                    fs.Flush();
+                    tfs.Flush();
+                }
             }
 
-            using (FileStream fs = File.Create(mp3Filename))
-            {
-                audioStream.CopyTo(fs);
-                fs.Flush();
-            }
+
         }
         
         /*

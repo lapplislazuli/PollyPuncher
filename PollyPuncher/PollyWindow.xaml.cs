@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Media;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -72,7 +73,7 @@ namespace PollyPuncher
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
-                    throw new InvalidDataException("This is not a file bro");
+                    //Do nothing, why would you
                     break;
             }
         }
