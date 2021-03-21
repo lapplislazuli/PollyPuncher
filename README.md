@@ -34,4 +34,4 @@ You  can follow [the guides from amazon](https://docs.aws.amazon.com/AWSEC2/late
 
 ## Note 
 
-The preview is (mostly) a recolor of the OpenMoji Parrot. 
+The [Preview](./Resources/PollyPuncherPreview.png) & Icon is (mostly) a recolor of the [OpenMoji Parrot](https://openmoji.org/library/#group=animals-nature&emoji=1F99C). 
