@@ -12,7 +12,8 @@ namespace PollyPuncher
     public partial class App : Application
     {
         public static readonly AudioDeviceProperties AudioDeviceProperties = new AudioDeviceProperties();
-        public static readonly PollyProperties PollyProperties = new PollyProperties();
+        public static PollyProperties PollyProperties = new PollyProperties();
+        public static readonly PollyPropertiesMemento PollyHistory = new PollyPropertiesMemento();
 
         /**
          * This method tries to load user-level settings specified for this App.

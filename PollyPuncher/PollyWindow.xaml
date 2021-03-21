@@ -143,17 +143,19 @@
                 <!-- There is currently no help needed.
                 <Button Grid.Row="0" Style="{StaticResource HelpButton}" ToolTip="Show some Information"> Help </Button>
                 -->
-                <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Voice:</Label>
-                <ComboBox Grid.Row="3" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.Voice}" 
+                <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Voice:</Label>
+                <ComboBox Grid.Row="1" ItemsSource="{Binding Path = PollyProps.Voices}" SelectedValue="{Binding Path = PollyProps.Voice}" 
                           Style="{StaticResource VoiceSelect}" ToolTip="The Amazon Voice to be selected. Best ones are Hans (default german) and Brian (default english)."/>
-                <Label Grid.Row="4" Style="{StaticResource HeaderLabel}">Sampling-Rate:</Label>
+                <Label Grid.Row="2" Style="{StaticResource HeaderLabel}">Sampling-Rate:</Label>
                 <!-- TODO: Inspect why Sampling Rate 32k is not working! -->
-                <Slider Grid.Row="5" Value="{Binding Path=PollyProps.SamplingRate}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" 
+                <Slider Grid.Row="3" Value="{Binding Path=PollyProps.SamplingRate}" TickPlacement="BottomRight" IsSnapToTickEnabled="True" 
                         Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center" ToolTip="The sampling rate for the audio - high means 'smoother' and is recommended."/>
-                <!-- TODO: Add in v1.1
-                <Button Grid.Row="6"> Last </Button>
-                <Button Grid.Row="7"> Next </Button>
-                -->
+                
+                <Button Grid.Row="4" x:Name="HistoryBackwardButton" Click="HistoryBackwardButton_OnClick"
+                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go to back in Sound-History"> Last </Button>
+                <Button Grid.Row="5" x:Name="HistoryForwardButton" Click="HistoryForwardButton_OnClick"
+                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go forth in Sound-History"> Next </Button>
+                
             </Grid>
         </Grid>
         

@@ -13,8 +13,13 @@ namespace PollyPuncher
     /// </summary>
     public partial class PollyWindow : Window
     {
+        // Despite IDE suggestions, these must be public, otherwise their attributes are invisible in UI.
+        // Also, the get & set are needed
         public PollyProperties PollyProps { get; set; }
-        public AudioDeviceProperties AudioProps  { get; set; }
+        public AudioDeviceProperties AudioProps { get; set; }
+
+        private PollyPropertiesMemento PollyHistory;
+        
 
         private PollyCaller pc;
         
@@ -23,6 +28,7 @@ namespace PollyPuncher
         {
             this.PollyProps = App.PollyProperties;
             this.AudioProps = App.AudioDeviceProperties;
+            this.PollyHistory = App.PollyHistory;
 
             App.LoadSettings();
             
@@ -47,6 +53,7 @@ namespace PollyPuncher
             else
             {
                 pc.Call();
+                PollyHistory.MakeMemento(this.PollyProps);
             }
         }
         
@@ -70,6 +77,7 @@ namespace PollyPuncher
                 case System.Windows.Forms.DialogResult.OK:
                     var file = saveFileDialog.FileName;
                     pc.SaveToFile(file);
+                    PollyHistory.MakeMemento(this.PollyProps);
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
                 default:
@@ -102,6 +110,38 @@ namespace PollyPuncher
         private void PollyWindow_OnClosing(object sender, CancelEventArgs e)
         {
             App.SaveSettings();
+        }
+
+        /**
+         * This Button method sets the Settings of PollyProps (Text, Voice & Sampling)
+         * to the last-seen one.
+         * If you are already somewhere in history, it goes one step (further) back.
+         * Save-Points are created on "Play" or "Save"
+         */
+        private void HistoryBackwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (PollyHistory.hasElements())
+            {
+                this.PollyProps = this.PollyHistory.MoveBack();
+                App.PollyProperties = this.PollyProps;
+                this.DataContext = this;
+            }
+        }
+        
+        /**
+         * This Button method sets the Settings of PollyProps (Text, Voice & Sampling)
+         * to the next-to-current-seen one.
+         * If you took 1 step back and then 1 step forth, you are at the current played entry.
+         * Save-Points are created on "Play" or "Save".
+         */
+        private void HistoryForwardButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (PollyHistory.hasElements())
+            {
+                this.PollyProps = this.PollyHistory.MoveForth();
+                App.PollyProperties = this.PollyProps;
+                this.DataContext = this;
+            }
         }
     }
 }
