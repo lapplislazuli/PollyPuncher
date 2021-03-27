@@ -26,7 +26,7 @@ namespace PollyPuncher
             }
         }
         
-        public string _apikey = String.Empty; // Your API Key for Request Signing
+        private string _apikey = String.Empty; // Your API Key for Request Signing
         public string ApiKey
         {
             get { return _apikey;}

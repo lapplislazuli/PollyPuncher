@@ -16,7 +16,7 @@ namespace PollyPuncher
      */
     public class PollyPropertiesMemento
     {
-        private int _index = 0;
+        private int _index = -1;
         private List<PollyProperties> _history = new List<PollyProperties>();
 
         /*
@@ -42,7 +42,7 @@ namespace PollyPuncher
          */
         public PollyProperties MoveForth()
         {
-            if (_index < _history.Count)
+            if (_index < _history.Count -1)
             {
                 _index++;
                 return _history[_index];
@@ -69,7 +69,7 @@ namespace PollyPuncher
                 return;
             
             // Case 1: Current Index is last of List 
-            if (_history.Count == 0 || _index == _history.Count -1 )
+            if (_history.Count == 0 || _index== -1 || _index == _history.Count -1 )
             {
                 // "Just" add a copy of current Properties to Memento List 
                 _history.Add(memento);
@@ -87,7 +87,7 @@ namespace PollyPuncher
             }
         }
 
-        public bool hasElements()
+        public bool HasElements()
         {
             return _history != null && _history.Count > 0;
         }

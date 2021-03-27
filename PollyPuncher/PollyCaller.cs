@@ -30,7 +30,6 @@ namespace PollyPuncher
     
     public class PollyCaller
     {
-        private PollyProperties PollyProps { get; set; }
         private AudioDeviceProperties AudioProps { get; set; }
 
         private Amazon.Runtime.CredentialManagement.CredentialProfile _awsProfile;
@@ -41,7 +40,6 @@ namespace PollyPuncher
         
         public PollyCaller(PollyProperties pollyProps, AudioDeviceProperties audioProps)
         {
-            this.PollyProps = pollyProps;
             this.AudioProps = audioProps;
 
             SetupSoundsFolder();
@@ -78,10 +76,10 @@ namespace PollyPuncher
          * Except for setting up the account, it is not used or verified at this point.
          * The method only fails if there is something wrong with the KeyFile.
          */
-        private void SetAwsProfile()
+        private void SetAwsProfile(PollyProperties pollyProps)
         {
             // Read the Credentials and store them shortly in an array
-            string path = PollyProps.ApiKey;
+            string path = pollyProps.ApiKey;
             
             var credentialFile = new Dictionary<string, string>();
             foreach (var row in File.ReadAllLines(path))
@@ -106,11 +104,11 @@ namespace PollyPuncher
          * If the text is known, it will be played to the selected audiodevices,
          * otherwise it will be created by Amazon, stored locally and then played.
          */
-        public void Call()
+        public void Call(PollyProperties pollyProps)
         {
-            SetAwsProfile();
+            SetAwsProfile(pollyProps);
             
-            string tempName = DeriveTemporaryName();
+            string tempName = DeriveTemporaryName(pollyProps);
             string tempFilePath = Path.GetFullPath( tempName + ".mp3",_soundDir.FullName);
             
             Stream audioStream = null;
@@ -120,7 +118,7 @@ namespace PollyPuncher
             }
             else
             {
-                audioStream = MakeAwsCall();
+                audioStream = MakeAwsCall(pollyProps);
                 _knownHashes[tempName] = audioStream;
             }
             
@@ -148,15 +146,15 @@ namespace PollyPuncher
          * If the text is known, it will be saved to the given filename,
          * otherwise it will be created by Amazon, stored locally and then saved.
          */
-        public void SaveToFile(string mp3Filename)
+        public void SaveToFile(string mp3Filename,PollyProperties pollyProps)
         {
             // There was an issue, when the stream was already played. 
             // If that was the case, the stream was "at an end" and could not be saved somewhere (file was just empty). 
             // So if the sound was played, there should be a temp file for it which we just move. 
             // If the file is not there - remove the key and run again.
             
-            SetAwsProfile();
-            string tempName = DeriveTemporaryName();
+            SetAwsProfile(pollyProps);
+            string tempName = DeriveTemporaryName(pollyProps);
             string tempFilePath = Path.GetFullPath( tempName + ".mp3",_soundDir.FullName);
             
             if (_knownHashes.ContainsKey(tempName))
@@ -169,12 +167,12 @@ namespace PollyPuncher
                     // The file got lost - thats bad. 
                     // Remove the key, and re-run again. This will also create the file.
                     _knownHashes.Remove(tempName);
-                    SaveToFile(mp3Filename);
+                    SaveToFile(mp3Filename,pollyProps);
                 }
             }
             else // The hash is not known - create it and make the file + temp file
             {
-                Stream audioStream = MakeAwsCall();
+                Stream audioStream = MakeAwsCall(pollyProps);
                 _knownHashes[tempName] = audioStream;
                 
                 if(File.Exists(mp3Filename))
@@ -204,7 +202,7 @@ namespace PollyPuncher
          *
          * I tried to address the 3) with value checks in the frontend, the others are not checked for atm.
          */
-        private Stream MakeAwsCall()
+        private Stream MakeAwsCall(PollyProperties pollyProps)
         {
             // Store the Amazon Profile in the Credentials Engine for later use
             var netSdkFile = new NetSDKCredentialsFile();
@@ -224,10 +222,10 @@ namespace PollyPuncher
                     var response = client.SynthesizeSpeechAsync(new SynthesizeSpeechRequest
                     {
                         OutputFormat = "mp3",
-                        SampleRate = PollyProps.SamplingRate.ToString(),
-                        Text = PollyProps.TextToPlay,
+                        SampleRate = pollyProps.SamplingRate.ToString(),
+                        Text = pollyProps.TextToPlay,
                         TextType = "text",
-                        VoiceId = PollyProps.Voice // One of Hans, Jenny , ...
+                        VoiceId = pollyProps.Voice // One of Hans, Jenny , ...
                     });
                     response.Wait();
 
@@ -286,9 +284,9 @@ namespace PollyPuncher
          * The number of digits is at the moment hardcoded in the PollyCaller as a constant.
          * The hashed properties are Text, Voice & SamplingRate.
          */
-        private string DeriveTemporaryName()
+        private string DeriveTemporaryName(PollyProperties pollyProps)
         {
-            var input = PollyProps.TextToPlay + "+" + PollyProps.Voice + "+" + PollyProps.SamplingRate;
+            var input = pollyProps.TextToPlay + "+" + pollyProps.Voice + "+" + pollyProps.SamplingRate;
             string output;
             using (var provider = System.Security.Cryptography.MD5.Create())
             {

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
 using System.Media;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -11,11 +12,23 @@ namespace PollyPuncher
     /// <summary>
     /// Interaction logic for PollyWindow.xaml
     /// </summary>
-    public partial class PollyWindow : Window
+    public partial class PollyWindow : Window,INotifyPropertyChanged
     {
         // Despite IDE suggestions, these must be public, otherwise their attributes are invisible in UI.
         // Also, the get & set are needed
-        public PollyProperties PollyProps { get; set; }
+        private PollyProperties _pollyProperties;
+        public PollyProperties PollyProps
+        {
+            get { return _pollyProperties;} 
+            set { 
+                if (value != _pollyProperties)
+                {
+                    this._pollyProperties = value;
+                    NotifyPropertyChanged("PollyProperties");
+                    NotifyPropertyChanged("DataContext");
+                }
+            } 
+        }
         public AudioDeviceProperties AudioProps { get; set; }
 
         private PollyPropertiesMemento PollyHistory;
@@ -26,7 +39,7 @@ namespace PollyPuncher
         
         public PollyWindow()
         {
-            this.PollyProps = App.PollyProperties;
+            this._pollyProperties = App.PollyProperties;
             this.AudioProps = App.AudioDeviceProperties;
             this.PollyHistory = App.PollyHistory;
 
@@ -52,7 +65,7 @@ namespace PollyPuncher
             }
             else
             {
-                pc.Call();
+                pc.Call(PollyProps);
                 PollyHistory.MakeMemento(this.PollyProps);
             }
         }
@@ -76,7 +89,7 @@ namespace PollyPuncher
             {
                 case System.Windows.Forms.DialogResult.OK:
                     var file = saveFileDialog.FileName;
-                    pc.SaveToFile(file);
+                    pc.SaveToFile(file,PollyProps);
                     PollyHistory.MakeMemento(this.PollyProps);
                     break;
                 case System.Windows.Forms.DialogResult.Cancel:
@@ -120,11 +133,13 @@ namespace PollyPuncher
          */
         private void HistoryBackwardButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (PollyHistory.hasElements())
+            if (PollyHistory.HasElements())
             {
-                this.PollyProps = this.PollyHistory.MoveBack();
+                var pollies = this.PollyHistory.MoveBack();
+                this.PollyProps = pollies;
                 App.PollyProperties = this.PollyProps;
                 this.DataContext = this;
+                InvalidateVisual();
             }
         }
         
@@ -136,12 +151,29 @@ namespace PollyPuncher
          */
         private void HistoryForwardButton_OnClick(object sender, RoutedEventArgs e)
         {
-            if (PollyHistory.hasElements())
+            if (PollyHistory.HasElements())
             {
-                this.PollyProps = this.PollyHistory.MoveForth();
+                var pollies = this.PollyHistory.MoveForth();
+                this.PollyProps = pollies;
                 App.PollyProperties = this.PollyProps;
                 this.DataContext = this;
             }
         }
+        
+        
+        
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument.
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
     }
 }
