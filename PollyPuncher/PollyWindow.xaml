@@ -38,11 +38,12 @@
             <Setter Property="Padding" Value="2"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
-        <Style x:Key="TTSBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Style x:Key="TtsBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
             <Setter Property="AcceptsReturn" Value="True"/>
             <Setter Property="AcceptsTab" Value="True"/>
+            <Setter Property="materialDesign:TextFieldAssist.RippleOnFocusEnabled" Value="False"/>
         </Style>
         <Style x:Key="HeaderLabel" TargetType="Label">
             <Setter Property="Margin" Value="0.5,3,3,0.25"/>
@@ -129,8 +130,9 @@
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Enter your Text below</Label>
                 <TextBox Grid.Row="1" x:Name="TextToSound" 
-                         Text="{Binding PollyProps.TextToPlay, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" 
-                         Style="{StaticResource TTSBox}"/>
+                         Text="{Binding PollyProps.TextToPlay, UpdateSourceTrigger=PropertyChanged, 
+                         Mode=TwoWay, IsAsync=True}"
+                         Style="{StaticResource TtsBox}"/>
             </Grid>
             
             <Grid Grid.Column="1">

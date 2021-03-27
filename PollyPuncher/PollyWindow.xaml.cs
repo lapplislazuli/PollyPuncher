@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -12,22 +13,14 @@ namespace PollyPuncher
     /// <summary>
     /// Interaction logic for PollyWindow.xaml
     /// </summary>
-    public partial class PollyWindow : Window,INotifyPropertyChanged
+    public partial class PollyWindow : Window
     {
         // Despite IDE suggestions, these must be public, otherwise their attributes are invisible in UI.
         // Also, the get & set are needed
-        private PollyProperties _pollyProperties;
         public PollyProperties PollyProps
         {
-            get { return _pollyProperties;} 
-            set { 
-                if (value != _pollyProperties)
-                {
-                    this._pollyProperties = value;
-                    NotifyPropertyChanged("PollyProperties");
-                    NotifyPropertyChanged("DataContext");
-                }
-            } 
+            get;
+            set;
         }
         public AudioDeviceProperties AudioProps { get; set; }
 
@@ -39,7 +32,7 @@ namespace PollyPuncher
         
         public PollyWindow()
         {
-            this._pollyProperties = App.PollyProperties;
+            this.PollyProps = App.PollyProperties;
             this.AudioProps = App.AudioDeviceProperties;
             this.PollyHistory = App.PollyHistory;
 
@@ -135,11 +128,11 @@ namespace PollyPuncher
         {
             if (PollyHistory.HasElements())
             {
-                var pollies = this.PollyHistory.MoveBack();
-                this.PollyProps = pollies;
-                App.PollyProperties = this.PollyProps;
-                this.DataContext = this;
-                InvalidateVisual();
+                var lastPollyProperties = this.PollyHistory.MoveBack();
+                
+                this.PollyProps.TextToPlay = lastPollyProperties.TextToPlay;
+                this.PollyProps.Voice = lastPollyProperties.Voice;
+                this.PollyProps.SamplingRate = lastPollyProperties.SamplingRate;
             }
         }
         
@@ -153,25 +146,11 @@ namespace PollyPuncher
         {
             if (PollyHistory.HasElements())
             {
-                var pollies = this.PollyHistory.MoveForth();
-                this.PollyProps = pollies;
-                App.PollyProperties = this.PollyProps;
-                this.DataContext = this;
-            }
-        }
-        
-        
-        
-        public event PropertyChangedEventHandler PropertyChanged;
+                var nextPollyProperties = this.PollyHistory.MoveForth();
 
-        // This method is called by the Set accessor of each property.
-        // The CallerMemberName attribute that is applied to the optional propertyName
-        // parameter causes the property name of the caller to be substituted as an argument.
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.PollyProps.TextToPlay = nextPollyProperties.TextToPlay;
+                this.PollyProps.Voice = nextPollyProperties.Voice;
+                this.PollyProps.SamplingRate = nextPollyProperties.SamplingRate;
             }
         }
 
