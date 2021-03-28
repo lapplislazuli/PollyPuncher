@@ -15,7 +15,10 @@
         Title="PollyWindow" Height="450" Width="800">
     
     <Window.Resources>
-        <RoutedUICommand x:Key="PlayHotkey" Text="Text" />
+        <RoutedUICommand x:Key="PlayHotkey"    />
+        <RoutedUICommand x:Key="SaveHotkey"    />
+        <RoutedUICommand x:Key="BackHotkey"    />
+        <RoutedUICommand x:Key="ForwardHotkey" />
         
         <Style x:Key="AudioSelect" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
              <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -69,11 +72,20 @@
 
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource PlayHotkey}" 
-                        Executed="PlayHotKey_Executed" />
+                        Executed="PlayHotKey_Executed" />        
+        <CommandBinding Command="{StaticResource SaveHotkey}" 
+                        Executed="SaveHotKey_Executed" />        
+        <CommandBinding Command="{StaticResource BackHotkey}" 
+                        Executed="BackHotKey_Executed"/>        
+        <CommandBinding Command="{StaticResource ForwardHotkey}" 
+                        Executed="ForwardHotKey_Executed" />
     </Window.CommandBindings>
 
     <Window.InputBindings>
         <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource PlayHotkey}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource SaveHotkey}"/>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{StaticResource BackHotkey}"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{StaticResource ForwardHotkey}"/>
     </Window.InputBindings>
 
     
@@ -156,9 +168,9 @@
                         Ticks="4000,8000,16000" Minimum="4000" Maximum="16000" VerticalAlignment="Center" ToolTip="The sampling rate for the audio - high means 'smoother' and is recommended."/>
                 
                 <Button Grid.Row="4" x:Name="HistoryBackwardButton" Click="HistoryBackwardButton_OnClick"
-                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go to back in Sound-History"> Last </Button>
+                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go to back in Sound-History (Keyboard Ctrl+Z)"> Last </Button>
                 <Button Grid.Row="5" x:Name="HistoryForwardButton" Click="HistoryForwardButton_OnClick"
-                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go forth in Sound-History"> Next </Button>
+                        Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Go forth in Sound-History (Keyboard Ctrl+Y)"> Next </Button>
                 
             </Grid>
         </Grid>
@@ -172,7 +184,7 @@
             <Button Grid.Column="1" x:Name="PlayButton" Click="PlayButton_OnClick" Style="{StaticResource ActionButton}" 
                     ToolTip="Play the sound to the selected Audio-Devices (Keyboard Ctrl+P)">Play</Button>
             <Button Grid.Column="2" x:Name="SaveButton" Click="SaveButton_OnClick" Style="{StaticResource ActionButton}"
-                    ToolTip="Save the sound to a chosen file. Only .mp3 is supported.">Save</Button>
+                    ToolTip="Save the sound to a chosen file. Only .mp3 is supported.(Keyboard Ctrl+S)">Save</Button>
         </Grid>
         
     </Grid>

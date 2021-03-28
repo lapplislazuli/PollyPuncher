@@ -49,6 +49,8 @@ namespace PollyPuncher
         {
             PlaySound();
         }
+        
+        private void PlayHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { PlaySound(); }
 
         private void PlaySound()
         {
@@ -62,10 +64,7 @@ namespace PollyPuncher
                 PollyHistory.MakeMemento(this.PollyProps);
             }
         }
-        
-        private void PlayHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { PlaySound(); }
 
-        
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(PollyProps.ApiKey) || PollyProps.ApiKey.Contains(","))
@@ -92,6 +91,8 @@ namespace PollyPuncher
             }
         }
         
+        private void SaveHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { SaveButton_OnClick(sender,e); }
+
         private void BtnKeyFileOpen_Click(object sender, RoutedEventArgs e)
         {
             var fileDialog = new OpenFileDialog();
@@ -113,18 +114,28 @@ namespace PollyPuncher
             }
         }
         
+        /*
+         * Called on window close - starts the properties saving in App.
+         */
         private void PollyWindow_OnClosing(object sender, CancelEventArgs e)
         {
             App.SaveSettings();
         }
 
+
+        private void HistoryBackwardButton_OnClick(object sender, RoutedEventArgs e) { MoveHistoryBackward(); }
+
+        private void BackHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { MoveHistoryBackward(); }
+        
         /**
-         * This Button method sets the Settings of PollyProps (Text, Voice & Sampling)
+         * This method sets the Settings of PollyProps (Text, Voice & Sampling)
          * to the last-seen one.
          * If you are already somewhere in history, it goes one step (further) back.
          * Save-Points are created on "Play" or "Save"
+         *
+         * It is separated to allow Hotkey and Button usage without duplication.
          */
-        private void HistoryBackwardButton_OnClick(object sender, RoutedEventArgs e)
+        private void MoveHistoryBackward()
         {
             if (PollyHistory.HasElements())
             {
@@ -135,14 +146,20 @@ namespace PollyPuncher
                 this.PollyProps.SamplingRate = lastPollyProperties.SamplingRate;
             }
         }
+
+        private void HistoryForwardButton_OnClick(object sender, RoutedEventArgs e) { MoveHistoryForward(); }
+
+        private void ForwardHotKey_Executed(object sender, ExecutedRoutedEventArgs e) { MoveHistoryForward(); }
         
         /**
-         * This Button method sets the Settings of PollyProps (Text, Voice & Sampling)
+         * This method sets the Settings of PollyProps (Text, Voice & Sampling)
          * to the next-to-current-seen one.
          * If you took 1 step back and then 1 step forth, you are at the current played entry.
          * Save-Points are created on "Play" or "Save".
+         *
+         * It is separated to allow Hotkey and Button usage without duplication.
          */
-        private void HistoryForwardButton_OnClick(object sender, RoutedEventArgs e)
+        private void MoveHistoryForward()
         {
             if (PollyHistory.HasElements())
             {

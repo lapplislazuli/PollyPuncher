@@ -5,10 +5,10 @@ Hi ! Welcome to this little pet project.
 PollyPuncher is a small Windows App that lets you contact the [AWS Polly API](https://aws.amazon.com/polly/?nc1=h_ls) to play or save Text-To-Speech. 
 
 I intent to use this mostly for memes and jokes, and I encourage you to do so too. 
-This is not meant to be an industrial TTS-tool for audiobooks or accessability or anything, 
+This is not meant to be an industrial TTS-tool for audiobooks or accessibility or anything, 
 just to :hankey:-post in calls. 
 
-**Important: You will need your own AWS Key!**
+**Important: You will need your own AWS Access Key!**
 
 ## Intended use
 
@@ -29,8 +29,10 @@ They can basically not escape your good vibes!
 
 **No Neural Voices** - Just the [AWS Standard-Voices](https://docs.aws.amazon.com/polly/latest/dg/voicelist.html) are supported.
 
+**3000 Character Limit** - Including Spaces / Tabs / etc., is a limit by Amazon.
+
 **AWS Keyfile must be CSV** - There is currently no support to pass your tokens/id/key without using the `.csv`-file. 
-You  can follow [the guides from amazon](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-iam.html). *Note:* The created file is not actually a valid `.csv`-file, but why would amazon care? 
+You  can follow [the guides from amazon](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey). *Note:* The created file is not actually a valid `.csv`-file, but why would amazon care? 
 
 ## Note 
 
