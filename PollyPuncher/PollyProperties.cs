@@ -108,10 +108,37 @@ namespace PollyPuncher
             "Hans"
         };
         
+        /*
+         * Simple Accessor for all available Voices.
+         * This is read only and cannot be changed.
+         * Brian is the standard english one, and Hans the standard German.
+         */
         public List<string> Voices
         {
             get => _voices.Select(a => a).ToList();
         }
+        
+        public override bool Equals(Object obj)
+        {
+            //Check for null and compare run-time types.
+            if (obj == null || !(obj is PollyProperties))
+            {
+                return false;
+            }
+            else {
+                PollyProperties other = (PollyProperties) obj;
+                return other.Voice == this.Voice
+                       && other.TextToPlay == this.TextToPlay
+                       && other.SamplingRate == this.SamplingRate;
+            }
+        }
 
+        public override int GetHashCode()
+        {
+            int result = TextToPlay.GetHashCode();
+            result = 31 * result + Voice.GetHashCode();
+            result = 31 * result + SamplingRate.GetHashCode();
+            return result;
+        }
     }
 }

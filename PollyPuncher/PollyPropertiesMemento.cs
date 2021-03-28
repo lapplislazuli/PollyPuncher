@@ -42,11 +42,15 @@ namespace PollyPuncher
          */
         public PollyProperties MoveForth()
         {
-            if (_index < _history.Count -1)
+            // Case 1: We are not at the last index
+            // Increase by 1 and return Element
+            if (_index < _history.Count - 1)
             {
                 _index++;
                 return _history[_index];
             }
+            // Case 2: We are either at max index, or empty, or anything else
+            // Return the last element.
             else
             {
                 return _history.Last();
@@ -91,6 +95,6 @@ namespace PollyPuncher
         {
             return _history != null && _history.Count > 0;
         }
-        
+
     }
 }
