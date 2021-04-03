@@ -16,29 +16,44 @@ namespace PollyPuncher
 {
     
     /*
-     * Further Reading
-     * 
-     * Amazon Polly API Reference
-     * https://docs.aws.amazon.com/polly/latest/dg/API_Reference.html
+     * This Class is the primary Class for retrieving and playing sounds from Amazon Polly. 
+     * It does:
      *
-     * Amazon Reference on how to register
-     * https://docs.aws.amazon.com/sdk-for-net/v3/developer-guide/net-dg-config-creds.html
+     * - Manage AWS Auth
+     * - Do AWS Calls
+     * - Save results (temporary) to files
+     * - Play it on Audio-Devices
+     * - CleanUp / Setup File System for this usage
+     *
+     * Further Reading : 
+     *      Amazon Polly API Reference
+     *      https://docs.aws.amazon.com/polly/latest/dg/API_Reference.html
+     *
+     *      Amazon Reference on how to register
+     *      https://docs.aws.amazon.com/sdk-for-net/v3/developer-guide/net-dg-config-creds.html
      * 
-     * More Info
-     * https://docs.aws.amazon.com/sdkfornet/v3/apidocs/index.html?page=Polly/MPollySynthesizeSpeechSynthesizeSpeechRequest.html
+     *      More Info
+     *      https://docs.aws.amazon.com/sdkfornet/v3/apidocs/index.html?page=Polly/MPollySynthesizeSpeechSynthesizeSpeechRequest.html
      */
     
     public class PollyCaller
     {
         private AudioDeviceProperties AudioProps { get; set; }
 
+        // More info on Credential Management is in the toplevel Link and throughout the MakeAwsCall method
         private Amazon.Runtime.CredentialManagement.CredentialProfile _awsProfile;
-        private const int HashCodeLength = 8;
-        private System.IO.DirectoryInfo _soundDir;
 
+        // Keeps track of the known combinations voice+text+sampling, to find played sounds instead of costly creation.
         private readonly Dictionary<string, Stream> _knownHashes = new Dictionary<string, Stream>();
+        // How many characters of the sha will be used for the hash (8 should be enough)
+        private const int HashCodeLength = 8;
+        // Where the temporary sounds will be stored
+        private System.IO.DirectoryInfo _soundDir;
         
-        public PollyCaller(PollyProperties pollyProps, AudioDeviceProperties audioProps)
+        // Holds all currently running Sounds, used (only) for cancelling audios.
+        private readonly List<WaveOut> _runningWaveOuts = new List<WaveOut>();
+
+        public PollyCaller(AudioDeviceProperties audioProps)
         {
             this.AudioProps = audioProps;
 
@@ -79,7 +94,7 @@ namespace PollyPuncher
         private void SetAwsProfile(PollyProperties pollyProps)
         {
             // Read the Credentials and store them shortly in an array
-            string path = pollyProps.ApiKey;
+            var path = pollyProps.ApiKey;
             
             var credentialFile = new Dictionary<string, string>();
             foreach (var row in File.ReadAllLines(path))
@@ -108,8 +123,8 @@ namespace PollyPuncher
         {
             SetAwsProfile(pollyProps);
             
-            string tempName = DeriveTemporaryName(pollyProps);
-            string tempFilePath = Path.GetFullPath( tempName + ".mp3",_soundDir.FullName);
+            var tempName = DeriveTemporaryName(pollyProps);
+            var tempFilePath = Path.GetFullPath( tempName + ".mp3",_soundDir.FullName);
             
             Stream audioStream = null;
             if (_knownHashes.ContainsKey(tempName))
@@ -141,7 +156,7 @@ namespace PollyPuncher
         }
         
         /*
-         * This method reads the polly properties and audioproperties,
+         * This method reads the polly properties and audio-properties,
          * then it checks if the wanted combination of text+voice is known already.
          * If the text is known, it will be saved to the given filename,
          * otherwise it will be created by Amazon, stored locally and then saved.
@@ -164,7 +179,7 @@ namespace PollyPuncher
                 }
                 else
                 {
-                    // The file got lost - thats bad. 
+                    // The file got lost - that's bad. 
                     // Remove the key, and re-run again. This will also create the file.
                     _knownHashes.Remove(tempName);
                     SaveToFile(mp3Filename,pollyProps);
@@ -174,10 +189,11 @@ namespace PollyPuncher
             {
                 Stream audioStream = MakeAwsCall(pollyProps);
                 _knownHashes[tempName] = audioStream;
-                
+                // I am not 100% sure, but overwriting did not properly work for audio-streams.
                 if(File.Exists(mp3Filename))
                     File.Delete(mp3Filename);
                 
+                // use two file-streams, to still save it to temp 
                 using (FileStream fs = File.Create(mp3Filename)) 
                 using (FileStream tfs = File.Create(tempFilePath))
                 {
@@ -200,7 +216,7 @@ namespace PollyPuncher
          * 2) The user is offline
          * 3) The specified content for the request is faulty
          *
-         * I tried to address the 3) with value checks in the frontend, the others are not checked for atm.
+         * I tried to address the 3) with value checks in the frontend, the others are not checked for at the moment.
          */
         private Stream MakeAwsCall(PollyProperties pollyProps)
         {
@@ -262,20 +278,26 @@ namespace PollyPuncher
             waveOut.Play();
             
             var bw = new BackgroundWorker();
+            // Do Work is the regular handler, checked every few ms 
             bw.DoWork += (s, o) =>
             {
-                while (waveOut.PlaybackState == PlaybackState.Playing)
+                while (waveOut.PlaybackState == PlaybackState.Playing || waveOut.PlaybackState== PlaybackState.Stopped)
                 {
                     Thread.Sleep(150);
                 }
+                // Dispose of all used resources
                 waveOut.Dispose();
                 baStream.Dispose();
                 wavStream.Dispose();
                 rdr.Dispose();
                 ms.Dispose();
+                // Set the inherited bw state to done (from running)
                 if (done != null) done();
             };
+
             bw.RunWorkerAsync();
+            // Add to currently running WaveOuts
+            _runningWaveOuts.Add(waveOut);
         }    
         
         /**
@@ -299,8 +321,17 @@ namespace PollyPuncher
             return output.Substring(0, PollyCaller.HashCodeLength);
         }
 
+        /**
+         * This method "stops" all running Sounds and looses track of them.
+         * This is plural, as maybe two audio-devices has been selected.
+         *
+         * The Background Workers clean themselves up once they update on a stopped WaveOut.
+         */
+        public void CancelAllRunningSounds()
+        {
+            _runningWaveOuts.ForEach(wv => wv.Stop());
+        }
+        
     }
-    
-
     
 }

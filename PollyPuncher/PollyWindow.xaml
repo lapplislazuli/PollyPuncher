@@ -17,6 +17,7 @@
     <Window.Resources>
         <RoutedUICommand x:Key="PlayHotkey"    />
         <RoutedUICommand x:Key="SaveHotkey"    />
+        <RoutedUICommand x:Key="MuteHotkey" />
         <RoutedUICommand x:Key="BackHotkey"    />
         <RoutedUICommand x:Key="ForwardHotkey" />
         
@@ -74,7 +75,9 @@
         <CommandBinding Command="{StaticResource PlayHotkey}" 
                         Executed="PlayHotKey_Executed" />        
         <CommandBinding Command="{StaticResource SaveHotkey}" 
-                        Executed="SaveHotKey_Executed" />        
+                        Executed="SaveHotKey_Executed" />
+        <CommandBinding Command="{StaticResource MuteHotkey}" 
+                        Executed="MuteHotkey_Executed" />                
         <CommandBinding Command="{StaticResource BackHotkey}" 
                         Executed="BackHotKey_Executed"/>        
         <CommandBinding Command="{StaticResource ForwardHotkey}" 
@@ -84,6 +87,7 @@
     <Window.InputBindings>
         <KeyBinding Key="P" Modifiers="Ctrl" Command="{StaticResource PlayHotkey}"/>
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource SaveHotkey}"/>
+        <KeyBinding Key="M" Modifiers="Ctrl" Command="{StaticResource MuteHotkey}"/>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{StaticResource BackHotkey}"/>
         <KeyBinding Key="Y" Modifiers="Ctrl" Command="{StaticResource ForwardHotkey}"/>
     </Window.InputBindings>
@@ -142,8 +146,7 @@
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Style="{StaticResource HeaderLabel}">Enter your Text below</Label>
                 <TextBox Grid.Row="1" x:Name="TextToSound" 
-                         Text="{Binding PollyProps.TextToPlay, UpdateSourceTrigger=PropertyChanged, 
-                         Mode=TwoWay, IsAsync=True}"
+                         Text="{Binding PollyProps.TextToPlay, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource TtsBox}"/>
             </Grid>
             
@@ -177,14 +180,17 @@
         
         <Grid Grid.Row="2" x:Name="OperationGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="8*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" x:Name="PlayButton" Click="PlayButton_OnClick" Style="{StaticResource ActionButton}" 
+            </Grid.ColumnDefinitions>            
+            <Button Grid.Column="0" x:Name="StopButton" Click="StopButton_OnClick" Style="{StaticResource ActionButton}" 
+                    ToolTip="Mute currently running Text (Keyboard Ctrl+M)">Mute</Button>
+            <Button Grid.Column="2" x:Name="PlayButton" Click="PlayButton_OnClick" Style="{StaticResource ActionButton}" 
                     ToolTip="Play the sound to the selected Audio-Devices (Keyboard Ctrl+P)">Play</Button>
-            <Button Grid.Column="2" x:Name="SaveButton" Click="SaveButton_OnClick" Style="{StaticResource ActionButton}"
-                    ToolTip="Save the sound to a chosen file. Only .mp3 is supported.(Keyboard Ctrl+S)">Save</Button>
+            <Button Grid.Column="3" x:Name="SaveButton" Click="SaveButton_OnClick" Style="{StaticResource ActionButton}"
+                    ToolTip="Save the sound to a chosen file. Only .mp3 is supported (Keyboard Ctrl+S)">Save</Button>
         </Grid>
         
     </Grid>

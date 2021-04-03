@@ -38,7 +38,7 @@ namespace PollyPuncher
 
             App.LoadSettings();
             
-            pc = new PollyCaller(PollyProps, AudioProps);
+            pc = new PollyCaller(AudioProps);
             
             InitializeComponent();
             
@@ -171,5 +171,14 @@ namespace PollyPuncher
             }
         }
 
+        private void StopButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            pc.CancelAllRunningSounds();
+        }
+
+        private void MuteHotkey_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            pc.CancelAllRunningSounds();
+        }
     }
 }
